@@ -2,6 +2,7 @@ bluespec.sty
 ============
 
 Bluespec SystemVerilog language definition for the LaTeX listings package
+
 Copyright 2013 Yuri Baida <yuri.baida@gmail.com>
 
 This work may be distributed and/or modified under the
