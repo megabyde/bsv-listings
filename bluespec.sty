@@ -1,179 +1,232 @@
-%% Bluespec SystemVerilog language definition for the LaTeX listings package
-%% Copyright 2013 Yury Bayda
-\lstdefinelanguage[Bluespec]{Verilog}
-{
+%% bluespec.sty -- Bluespec SystemVerilog support for the listings package
+%% Copyright 2013-2026 Yury Bayda, MIT licensed; see LICENSE.txt.
+%%
+%% Keyword lists curated against bsc 2026.01; see README.md for their sources.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bluespec}[2026/08/23 v2.0 Bluespec SystemVerilog for listings]
+
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+
+\newif\ifbsv@setdefault
+\DeclareOption{default}{\bsv@setdefaulttrue}
+\DeclareOption*{\PackageWarning{bluespec}{Unknown option `\CurrentOption'}}
+\ProcessOptions\relax
+
+%% \providecolor leaves a color the document defined first alone.  Directives
+%% and attributes share a value because both address the toolchain rather than
+%% the hardware, but they stay separately redefinable.
+\providecolor{bsvkeyword}{HTML}{0F5FA6}
+\providecolor{bsvtype}{HTML}{00786B}
+\providecolor{bsvfunction}{HTML}{6B3FA0}
+\providecolor{bsvsystemtask}{HTML}{2E7D32}
+\providecolor{bsvdirective}{HTML}{8A6D00}
+\providecolor{bsvattribute}{HTML}{8A6D00}
+\providecolor{bsvcomment}{HTML}{707070}
+\providecolor{bsvstring}{HTML}{A31515}
+
+%% Attributes are highlighted as a whole, (* and *) included.  The bsv style
+%% installs the delimiter; redefine this to change or drop the highlighting.
+\newcommand\bsvattributestyle{\color{bsvattribute}}
+
+%% Keyword classes:
+%%   [1] reserved and contextual keywords
+%%   [2] library types, typeclasses and packages
+%%   [3] library functions, module constructors and interface methods
+%%   [4] system tasks and functions
+%%   [5] compiler directives
+\lstdefinelanguage{BSV}{
   sensitive = true,
+  alsoletter = {\$\`},
   morekeywords = [1]{
-    %% SystemVerilog keywords
-    begin,
-    bit,
-    break,
-    case,
-    continue,
-    default,
-    do,
-    else,
-    end,
-    endcase,
-    function,
-    endfunction,
-    endinterface,
-    endmodule,
-    endpackage,
-    enum,
-    export,
-    extern,
-    for,
-    if,
-    import,
-    int,
-    interface,
-    local,
-    localparam,
-    matches,
-    module,
-    package,
-    tagged,
-    type,
-    typedef,
-    struct,
-    union,
-    void,
-    %% Bluespec keywords
-    action,
-    endaction,
-    actionvalue,
-    endactionvalue,
-    ancestor,
-    deriving,
-    instance,
-    endinstance,
-    let,
-    return,
-    match,
-    method,
-    endmethod,
-    par,
-    endpar,
-    powered_by,
-    provisos,
-    rule,
-    endrule,
-    rules,
-    endrules,
-    seq,
-    endseq,
-    schedule,
-    typeclass,
-    endtypeclass,
-    clock,
-    reset,
-    noreset,
-    no_reset,
-    clocked_by,
-    reset_by,
-    default_clock,
-    default_reset,
-    output_clock,
-    output_reset,
-    input_clock,
-    input_reset,
-    same_family,
+    abortif, action, actionvalue, ancestor, begin, bit, break, case, clock,
+    clocked_by, continue, default, default_clock, default_reset, dependencies,
+    deriving, determines, else, enable, end, endaction, endactionvalue, endcase,
+    endfunction, endinstance, endinterface, endmethod, endmodule, endpackage,
+    endpar, endrule, endrules, endseq, endtypeclass, enum, export, for,
+    function, gate, goto, if, ifc_inout, import, inhigh, inout, input_clock,
+    input_reset, instance, int, interface, let, match, matches, method, module,
+    no_clock, no_reset, noreset, numeric, osc, output_clock, output_reset,
+    package, par, parameter, path, port, powered_by, provisos, ready, repeat,
+    reset, reset_by, return, rule, rules, same_family, schedule, seq, struct,
+    tagged, type, typeclass, typedef, union, unused, void, while
   },
   morekeywords = [2]{
-    %% Frequently used predefined types
-    Action,
-    ActionValue,
-    Integer,
-    Nat,
-    Bit,
-    UInt,
-    Int,
-    Bool,
-    Maybe,
-    String,
-    Either,
-    Rules,
-    Module,
-    Clock,
-    Reset,
-    Power,
-    TAdd, TSub, TMul, TDiv, TLog, TExp, TMax, TMin, SizeOf,
-    %%
-    Empty,
-    Reg,
-    RWire, Wire, BypassWire, PulseWire,
-    RegFile,
-    Vector,
-    FIFO, FIFOF,
-    %%
-    Bits, Eq, Ord, Bounded,
-    Arith, Literal, Bitwise, BitReduction, BitExtend,
-    IsModule, TieOff, ToPut, ToGet,
-    Add, Max, Log, FShow, Randomizable, RealLiteral,
-    %% Attributes
-    synthesize, noinline, doc, options,
-    always_ready, always_enabled,
-    ready, enable, result, prefix,
-    fire_when_enabled, no_implicit_conditions,
-    bit_blast, scan_insert,
-    descending_urgency, preempts, conservative_implicit_conditions,
-    internal_scheduling, method_scheduling,
-    CLK, RST_N, RSTN, ungated_clock
-  }, 
+    Action, ActionValue, Add, Alias, AlignedFIFOs, Applicative, Arbiter, Arith,
+    Array, Assert, AssertFifoTest_IFC, AssertQuiescentTest_IFC,
+    AssertSampleTest_IFC, AssertStartStopTest_IFC, AssertStartTest_IFC,
+    AssertTest_IFC, AssertTransitionTest_IFC, BGetPut, BRAM, BRAMCore, BRAMFIFO,
+    BRAMRequest, BRAMRequestBE, BRAM_Configure, BRAM_DUAL_PORT, BRAM_PORT, Bit,
+    BitExtend, BitReduction, Bits, Bitwise, Bool, Bounded, BufferMode,
+    BuildVector, CBus, CGetPut, CRC, CShow, Char, Client, ClientServer, Clock,
+    ClockDividerIfc, Clocks, Cntrs, CommitIfc, CompletionBuffer, Complex,
+    ConfigReg, Connectable, Cons, Control, Count, Counter, DReg, DefaultValue,
+    Div, Divide, DualPortRamIfc, Either, Empty, Enum, Environment, Eq, FIFO,
+    FIFOCountIfc, FIFOF, FIFOLevel, FIFOLevelIfc, FShow, False, File,
+    FixedPoint, FloatingPoint, Fmt, Foldable, Functor, GatedClockIfc, Gearbox,
+    Generic, Get, GetPut, Gettable, Gray, GrayCounter, HAppend, HHead, HLength,
+    HList, HSplit, HTail, IWithCBus, Inout, Int, Integer, Invalid, IsModule,
+    LBSReg, LBus, LFSR, LUInt, LbAddr, LevelFIFO, List, ListN, Literal, Log,
+    MIMO, MIMOConfiguration, MakeClockIfc, MakeResetIfc, Math, Max, Maybe,
+    Memory, Min, Module, ModuleCollect, ModuleContext, Monad, MonadFix, Mul,
+    MuxRstIfc, Nat, Nil, NumAlias, NumberTypes, OInt, OVLAssertions, Ord,
+    Ordering, Prelude, Printf, Probe, PulseWire, Put, RWire, Randomizable,
+    Randomize, ReadOnly, Real, RealLiteral, Reg, RegFile, Reserved, ReservedOne,
+    ReservedZero, Reset, RevertingVirtualReg, Rules, SShow, SaturatingArith,
+    Server, SizeOf, SizedLiteral, SpecialFIFOs, SquareRoot, Stmt, StmtFSM,
+    Stmts, String, StringLiteral, SyncBitIfc, SyncFIFOCountIfc, SyncFIFOIfc,
+    SyncFIFOLevelIfc, SyncPulseIfc, TAdd, TDiv, TExp, TLog, TMax, TMin, TMul,
+    TNumToStr, TStrCat, TSub, TieOff, ToGet, ToPut, Traversable, TriState, True,
+    Tuple2, Tuple3, Tuple4, Tuple5, Tuple6, Tuple7, Tuple8, UCount, UInt,
+    UniqueWrappers, UnitAppendList, Valid, Vector, Void, Wire, Wrapper,
+    WriteOnly, ZBus, ZBusBusIFC, ZBusClientIFC, ZBusDualIFC
+  },
   morekeywords = [3]{
-    %% Frequently used expressions
-    True,
-    False,
-    mkReg, mkRegU, mkRegA, mkRWire, mkWire, mkFIFO, mkSizedFIFOUG, mkFIFO1,
-    mkBypassWire, mkDWire, mkPulseWire,
-    pack, unpack, zeroExtend, signExtend, truncate, extend,
-    fromInteger, inLiteralRange, negate,
-    valueOf, valueof, SizeOf, defaultValue,
-    minBound, maxBound,
-    signedShiftRight, div, mod, exp, log2, add, abs, max, min, quot, rem,
-    fromMaybe, isValid, validValue, noAction,
-    error, warning, message, messageM,
-    nosplit, emptyRules, addRules, rJoin, rJoinPreempts, rJoinDescendingUrgency,
-    fshow, newVector,
-    %% System tasks
-    \$display,
-    \$displayb,
-    \$displayh,
-    \$displayo,
-    \$write,
-    \$writeb,
-    \$writeh,
-    \$writeo,
-    \$fopen,
-    \$fclose,
-    \$fgetc,
-    \$ungetc,
-    \$fflush,
-    \$fdisplay,
-    \$fdisplayb,
-    \$fdisplayh,
-    \$fdisplayo,
-    \$fwrite,
-    \$fwriteb,
-    \$fwriteh,
-    \$fwriteo,
-    \$stop,
-    \$finish,
-    \$dumpon,
-    \$dumpoff,
-    \$dumpvars,
-    \$dumpfile,
-    \$dumpflush,
-    \$time,
-    \$stime,
-    \$signed,
-    \$unsigned,
-    \$test\$plusargs,
-    \$format
+    _read, _write, abs, acosh, addBIUInt, addRules, addToCollection, addUInt,
+    all, and, any, append, appendTuple, applyToContext, applyToContextM,
+    arrayToVector, asReg, asTypeOf, asinh, assertReset, atan2, atanh, await,
+    bind, bitconcat, bsv_assert_always, bsv_assert_always_on_edge,
+    bsv_assert_change, bsv_assert_cycle_sequence, bsv_assert_decrement,
+    bsv_assert_delta, bsv_assert_even_parity, bsv_assert_fifo_index,
+    bsv_assert_frame, bsv_assert_handshake, bsv_assert_implication,
+    bsv_assert_increment, bsv_assert_never, bsv_assert_never_unknown,
+    bsv_assert_never_unknown_async, bsv_assert_next, bsv_assert_no_overflow,
+    bsv_assert_no_transition, bsv_assert_no_underflow, bsv_assert_odd_parity,
+    bsv_assert_one_cold, bsv_assert_one_hot, bsv_assert_proposition,
+    bsv_assert_quiescent_state, bsv_assert_range, bsv_assert_time,
+    bsv_assert_transition, bsv_assert_unchange, bsv_assert_width,
+    bsv_assert_win_change, bsv_assert_win_unchange, bsv_assert_window,
+    bsv_assert_zero_one_hot, buildVersion, ceil, clear, clockOf, cmplx,
+    cmplxConj, cmplxMap, cmplxSwap, cmplxWrite, compare, compilerVersion,
+    compose, composeM, concat, concatTuple, cons, constFn, continuousAssert,
+    cos, cosh, countElem, countIf, countLeadingZeros, countOnes, countOnesAlt,
+    countZerosLSB, countZerosMSB, curry, curryN, dClear, dCount, dNotEmpty,
+    dNotFull, date, decodeReal, decr, deepSplitPorts, delay, deq, deqReady,
+    deqReadyN, dgProbe, div, drop, dropWhile, dropWhileRev, dynamicAssert, elem,
+    emptyRules, enq, enqReady, enqReadyN, enumAll, enumFromTo, epochTime,
+    epsilon, error, errorM, exp, exp_e, exposeCBusIFC, exposeCollection,
+    exposeCurrentClock, exposeCurrentReset, extend, fifoToGet, fifoToPut,
+    fifofToFifo, filter, find, findElem, findIndex, first, flatten, flatten0,
+    flip, floor, fold, foldM, foldl, foldl1, foldlM, foldr, foldr1, foldrM,
+    fromInt, fromInteger, fromMaybe, fromReal, fromSizedInteger, fromUInt,
+    fshow, func, fxptAdd, fxptGetFrac, fxptGetInt, fxptMult, fxptQuot,
+    fxptSignExtend, fxptSub, fxptTruncate, fxptTruncateRoundSat,
+    fxptTruncateSat, fxptWrite, fxptZeroExtend, gcd, genC, genModuleName,
+    genPackageName, genVector, genVerilog, genWith, genWithM, get, getGateCond,
+    grayDecode, grayDecr, grayEncode, grayIncr, grayIncrDecr, group, groupBy,
+    hClose, hFlush, hGetBuffering, hGetChar, hGetLine, hIsClosed, hIsEOF,
+    hIsOpen, hIsReadable, hPutChar, hPutStr, hPutStrLn, hSetBuffering, head, id,
+    incr, init, invert, invertCurrentClock, invertCurrentReset, isAncestor,
+    isGreaterThan, isInfinite, isLessThan, isNegativeZero, isResetAsserted,
+    isValid, joinActions, joinRules, last, lcm, length, liftM, log, log10, log2,
+    logb, lookup, lookupAll, lsb, map, mapAccumL, mapAccumR, mapCollection,
+    mapM, mapM_, mapPairs, maskdata, max, maxBound, message, messageM, mfix,
+    min, minBound, mk1toNGearbox, mkAbsoluteClock, mkAbsoluteClockFull,
+    mkAlignedFIFO, mkArbiter, mkAsyncReset, mkAsyncResetFromCR, mkAutoFSM,
+    mkBClientServer, mkBGetPut, mkBRAM1Server, mkBRAM1ServerBE, mkBRAM2Server,
+    mkBRAMCore1, mkBRAMCore1BE, mkBRAMCore1BELoad, mkBRAMCore1Load, mkBRAMCore2,
+    mkBRAMCore2BE, mkBRAMCore2BELoad, mkBRAMCore2Load, mkBRAMStore1W2R,
+    mkBRAMStore2W1R, mkBypassFIFO, mkBypassFIFOF, mkBypassFIFOLevel,
+    mkBypassWire, mkCClientServer, mkCGetPut, mkCRC, mkCRC16, mkCRC32,
+    mkCRC_CCITT, mkCReg, mkCRegA, mkCRegU, mkClientBServer, mkClientCServer,
+    mkClock, mkClockDivider, mkClockDividerOffset, mkClockInverter, mkClockMux,
+    mkClockSelect, mkCompletionBuffer, mkConfigReg, mkConfigRegA, mkConfigRegU,
+    mkConstrainedRandomizer, mkCount, mkCounter, mkDFIFOF, mkDReg, mkDRegA,
+    mkDRegU, mkDWire, mkDepthParamFIFO, mkDepthParamFIFOF, mkDivider, mkDualRam,
+    mkFIFO, mkFIFO1, mkFIFOCount, mkFIFOF, mkFIFOF1, mkFIFOLevel, mkFSM,
+    mkFSMServer, mkFSMWithPred, mkFeedLFSR, mkGDepthParamFIFOF, mkGFIFOCount,
+    mkGFIFOF, mkGFIFOF1, mkGFIFOLevel, mkGLFIFOF, mkGPFIFO, mkGPFIFO1,
+    mkGPSizedFIFO, mkGSizedFIFOF, mkGatedClock, mkGatedClockDivider,
+    mkGatedClockFromCC, mkGatedClockInverter, mkGenericRandomizer, mkGetBPut,
+    mkGetCPut, mkGrayCounter, mkHoldArbiter, mkInitialReset, mkLFIFO, mkLFIFOF,
+    mkMIMO, mkMIMOReg, mkMIMOV, mkNto1Gearbox, mkNullCrossingReg,
+    mkNullCrossingRegA, mkNullCrossingRegU, mkNullCrossingWire, mkOnce,
+    mkPipelineFIFO, mkPipelineFIFOF, mkPulseWire, mkPulseWireOR, mkRWire,
+    mkRWireSBR, mkReg, mkRegA, mkRegFile, mkRegFileFull, mkRegFileLoad,
+    mkRegStore, mkRegU, mkRegVectorStore, mkReset, mkResetEither,
+    mkResetInverter, mkResetMux, mkResetSync, mkRevertingVirtualReg,
+    mkSizedBRAMFIFO, mkSizedBRAMFIFOF, mkSizedBypassFIFOF, mkSizedFIFO,
+    mkSizedFIFOF, mkStickyArbiter, mkSyncBRAM2Server, mkSyncBRAM2ServerBE,
+    mkSyncBRAMCore2, mkSyncBRAMCore2BE, mkSyncBRAMCore2BELoad,
+    mkSyncBRAMCore2Load, mkSyncBRAMFIFO, mkSyncBRAMFIFOFromCC,
+    mkSyncBRAMFIFOToCC, mkSyncBit, mkSyncBit05, mkSyncBit05FromCC,
+    mkSyncBit05ToCC, mkSyncBit1, mkSyncBit15, mkSyncBit15FromCC,
+    mkSyncBit15ToCC, mkSyncBit1FromCC, mkSyncBit1ToCC, mkSyncBitFromCC,
+    mkSyncBitToCC, mkSyncFIFO, mkSyncFIFOCount, mkSyncFIFOFromCC,
+    mkSyncFIFOFromCCFull, mkSyncFIFOFull, mkSyncFIFOLevel, mkSyncFIFOToCC,
+    mkSyncFIFOToCCFull, mkSyncFIFOToFast, mkSyncFIFOToSlow, mkSyncHandshake,
+    mkSyncHandshakeFromCC, mkSyncHandshakeToCC, mkSyncPulse, mkSyncPulseFromCC,
+    mkSyncPulseToCC, mkSyncReg, mkSyncRegFromCC, mkSyncRegToCC, mkSyncRegToFast,
+    mkSyncReset, mkSyncResetFromCR, mkTriState, mkUCount, mkUGDepthParamFIFOF,
+    mkUGFIFOF, mkUGFIFOF1, mkUGLFIFOF, mkUGSizedFIFOF, mkUngatedClock,
+    mkUngatedClockMux, mkUngatedClockSelect, mkUniqueWrapper, mkUnsafeCounter,
+    mkUnsafeDWire, mkUnsafePulseWire, mkUnsafePulseWireOR, mkUnsafeRWire,
+    mkUnsafeWire, mkWire, mkZBus, mkZBusBuffer, mod, msb, negate, newVector,
+    nil, noAction, noClock, noReset, not, notEmpty, notFull, nullCrossing,
+    oneHotSelect, openFile, or, pack, parity, peekGet, pi, portAClear,
+    portBClear, pow, pulseWireToReadOnly, put, quot, rJoin, rJoinConflictFree,
+    rJoinDescendingUrgency, rJoinExecutionOrder, rJoinMutuallyExclusive,
+    rJoinPreempts, read, readReadOnly, readReg, readVReg, realToDigits,
+    reburyContext, reduceAnd, reduceNand, reduceNor, reduceOr, reduceXnor,
+    reduceXor, reflect, regToReadOnly, rem, replicate, replicateM, request,
+    resetOf, response, reverse, reverseBits, rotate, rotateBitsBy, rotateBy,
+    rotateR, round, runWithContext, runWithContexts, sClear, sCount, sNotEmpty,
+    sNotFull, sameFamily, satMinus, satPlus, sbtrctBIUInt, scanl, scanr, search,
+    select, send, setGateCond, shallowSplitPorts, shiftInAt0, shiftInAtN,
+    shiftOutFrom0, shiftOutFromN, signExtend, signedGE, signedGT, signedLE,
+    signedLT, signedMul, signedQuot, signedShiftRight, signum, sin, sinh,
+    sizeOf, sort, sortBy, split, splitPorts, splitReal, splitTuple, sprintf,
+    sqrt, sscanl, sscanr, start, staticAssert, strConcat, stringOf, stringof,
+    sub, tail, take, takeAt, takeWhile, takeWhileRev, tan, tanh, toChunks,
+    toGPClient, toGPServer, toGet, toList, toPut, toVector, transpose,
+    transposeLN, trunc, truncate, truncateLSB, uaMap, uaMapM, unburyContext,
+    unburyContextWithClocks, unconcatTuple, uncurry, uncurryN, unpack,
+    unsignedMul, unsignedQuot, unwrap, unwrapBI, unzip, upd, update,
+    updateDataWithMask, upto, valueOf, valueof, vectorToArray, warning,
+    warningM, wget, when, wrap, write, writeReg, writeVReg, wset, zeroExtend,
+    zip, zip3, zip4, zipAny, zipWith, zipWith3, zipWith3M, zipWith4, zipWithAny,
+    zipWithAny3, zipWithM, zipWithM_
+  },
+  morekeywords = [4]{
+    \$bitstoreal, \$display, \$displayb, \$displayh, \$displayo, \$dumpall,
+    \$dumpfile, \$dumpflush, \$dumplimit, \$dumpoff, \$dumpon, \$dumpvars,
+    \$error, \$fatal, \$fclose, \$fdisplay, \$fdisplayb, \$fdisplayh,
+    \$fdisplayo, \$fflush, \$fgetc, \$finish, \$fopen, \$format, \$fwrite,
+    \$fwriteb, \$fwriteh, \$fwriteo, \$info, \$random, \$realtobits, \$sformat,
+    \$sformatAV, \$signed, \$stime, \$stop, \$swrite, \$swriteAV, \$swriteb,
+    \$swritebAV, \$swriteh, \$swritehAV, \$swriteo, \$swriteoAV,
+    \$test\$plusargs, \$time, \$ungetc, \$unsigned, \$warning, \$write,
+    \$writeb, \$writeh, \$writeo
   },
   morecomment = [l]{//},
   morecomment = [s]{/*}{*/},
   morestring = [b]",
-  morestring = [b]'
+  morekeywords = [5]{
+    `define, `else, `elsif, `endif, `ifdef, `ifndef, `include, `line, `undef
+  },
 }
+
+%% language={[Bluespec]Verilog} is how this package was used before v2.0.
+\lstalias[Bluespec]{Verilog}[]{BSV}
+
+%% Colors only: the document keeps its own basicstyle, column model and frame.
+%% \bfseries needs a typewriter font that has a bold shape, which Computer
+%% Modern does not; color carries the distinction on its own.
+\lstdefinestyle{bsv}{
+  language = BSV,
+  keywordstyle = [1]\color{bsvkeyword}\bfseries,
+  keywordstyle = [2]\color{bsvtype},
+  keywordstyle = [3]\color{bsvfunction},
+  keywordstyle = [4]\color{bsvsystemtask},
+  keywordstyle = [5]\color{bsvdirective},
+  commentstyle = \color{bsvcomment}\itshape,
+  stringstyle = \color{bsvstring},
+  moredelim = [s][\bsvattributestyle]{(*}{*)},
+  showstringspaces = false,
+}
+
+\ifbsv@setdefault
+  \lstset{style=bsv}
+\fi
+
+\endinput
