@@ -1,0 +1,57 @@
+\documentclass[a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}   % Computer Modern has no bold tt, so \bfseries is dropped
+\usepackage{upquote}   % straight quotes in 8'hFF and friends
+\usepackage[margin=25mm]{geometry}
+\usepackage{bluespec}
+
+\title{Typesetting Bluespec SystemVerilog with \texttt{bluespec.sty}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+% How the listings are set is the document's business; style=bsv contributes
+% the language and the colors, and is asked for per listing below
+\lstset{basicstyle=\ttfamily\small, columns=fullflexible, keepspaces=true}
+
+\section*{A whole file}
+
+\lstinputlisting[style=bsv, caption={\texttt{Gcd.bsv}},
+                 numbers=left, frame=single]{Gcd.bsv}
+
+\section*{An inline listing}
+
+A rule fires when its guard holds:
+%
+\begin{lstlisting}[style=bsv]
+rule count (cnt < 8'd200 && !full);
+   cnt <= cnt + 1;
+   $display("cnt = %0h at %0t", cnt, $time);
+endrule
+\end{lstlisting}
+
+\section*{Short fragments}
+
+The literal \lstinline[style=bsv]|8'hFF| is a sized literal,
+\lstinline[style=bsv]|mkReg| is a module constructor, and
+\lstinline[style=bsv]|(* synthesize *)| is an attribute.
+
+\section*{The language on its own}
+
+Ask for \texttt{language=BSV} instead of the style and the package paints
+nothing: the keyword classes, the comments, the strings and the attribute
+delimiter all take whatever the document already specified. A single
+\texttt{keywordstyle} reaches all five classes, because listings falls back to
+it for the classes that have no style of their own.
+%
+\begin{lstlisting}[language=BSV, keywordstyle=\bfseries, commentstyle=\itshape]
+(* synthesize *)
+module mkCount (Empty);          // a monochrome document keeps its own scheme
+   Reg#(Bit#(8)) cnt <- mkReg(0);
+   rule count; cnt <= cnt + 1; endrule
+endmodule
+\end{lstlisting}
+
+\end{document}

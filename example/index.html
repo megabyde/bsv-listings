@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bluespec.sty example</title>
+<style>
+  :root { color-scheme: light dark; --fg: #1a1a1a; --bg: #ffffff; --dim: #5a5a5a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #e6e6e6; --bg: #161616; --dim: #a0a0a0; }
+  }
+  body {
+    margin: 0 auto; padding: 2rem 1.25rem; max-width: 60rem;
+    font: 16px/1.55 system-ui, sans-serif; color: var(--fg); background: var(--bg);
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  p { margin: .5rem 0 1rem; }
+  a { color: inherit; }
+  .dim { color: var(--dim); font-size: .9rem; }
+  object, iframe { width: 100%; height: 46rem; border: 1px solid var(--dim); }
+</style>
+</head>
+<body>
+
+<h1>bluespec.sty</h1>
+
+<p>Bluespec SystemVerilog for the LaTeX
+<a href="https://www.ctan.org/pkg/listings">listings</a> package. This is the
+example from the repository, rebuilt on every push:
+<a href="https://github.com/megabyde/bsv-listings/blob/master/example/Gcd.bsv">Gcd.bsv</a>
+typeset by
+<a href="https://github.com/megabyde/bsv-listings/blob/master/example/demo.tex">demo.tex</a>.
+The last section takes the language without the style, to show that the package
+paints nothing until it is asked to.</p>
+
+<object data="demo.pdf" type="application/pdf">
+  <p>Your browser will not display the PDF inline.
+  <a href="demo.pdf">Download demo.pdf</a> instead.</p>
+</object>
+
+<p class="dim"><a href="demo.pdf">demo.pdf</a> &middot;
+<a href="https://github.com/megabyde/bsv-listings">source</a> &middot;
+MIT</p>
+
+</body>
+</html>
