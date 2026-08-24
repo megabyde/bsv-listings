@@ -67,7 +67,7 @@ listing, a few `\lstinline` fragments, and a last section that takes
 `language=BSV` without the style, to show that the package paints nothing
 until it is asked to.
 
-The build from `master` is published at
+The build from `main` is published at
 <https://megabyde.github.io/bsv-listings/>, so you can see the highlighting
 before installing anything.
 
