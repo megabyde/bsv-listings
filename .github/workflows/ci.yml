@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: xu-cheng/latex-action@v3
+      - uses: xu-cheng/latex-action@v4
         env:
           TEXINPUTS: "..:"
         with:
